@@ -1,0 +1,5 @@
+<launch>  
+  <node pkg="microfono" type="voice_activity_detection.py" name="voice_activity_detection" required="true" output="screen" />
+  <node pkg="microfono" type="sound_recognition_node.py" name="sound_recognition_node" required="true" output="screen" />
+
+</launch>
