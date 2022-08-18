@@ -2,6 +2,7 @@
 from optparse import OptionParser
 import rospy
 import sys
+import pyttsx3
 from nao_nodes.srv import *
 
 calls = {"cow": "muuu",
@@ -12,16 +13,22 @@ calls = {"cow": "muuu",
 
 errors = 0
 
+def our_tts(text):
+    engine = pyttsx3.init()
+    engine.say(text)
+    engine.runAndWait()
 
 def text_2_speech(text):
     service = rospy.ServiceProxy('tts', Text2Speech)
     _ = service(text)
 
+tts = our_tts
+
 
 def say_call(obj, call):
-    text_2_speech('This is ' + str(obj))
+    tts(str("This is " + obj))
     rospy.sleep(2)
-    text_2_speech('repeat:' + call)
+    tts(str("repeat" + call))
 
 
 def check(objects):
@@ -48,11 +55,14 @@ if __name__ == "__main__":
     rospy.init_node('main_node')
     rospy.loginfo("===============================================")
     rospy.loginfo("===============================================")
-    rospy.loginfo(objs)
+    #say_call('car', 'bruuum')
+
     rospy.loginfo("===============================================")
     rospy.loginfo("===============================================")
-    #while(errors < 3):
-     #   moveToObj(num)
-      #  sayCall(obj, call)
-       # listen()
+
+    while(errors < 3):
+        #moveToObj(num)
+        say_call(obj, call)
+        listen()
+
 

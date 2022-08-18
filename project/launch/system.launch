@@ -1,6 +1,6 @@
 <launch>
   <arg name="object1" default = "train" />
-  <arg name="object2" default = "cow"/>
+  <arg name="object2" default = "cow" />
   <arg name="object3" default = "sheep"/>
   <arg name="object4" default = "car" />
   <arg name="object5" default = "dog" />
