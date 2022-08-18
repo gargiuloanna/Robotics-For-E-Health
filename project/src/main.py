@@ -3,7 +3,8 @@ from optparse import OptionParser
 import rospy
 import sys
 import pyttsx3
-from nao_nodes.srv import *
+from microfono.msg import ClassifiedData
+
 
 calls = {"cow": "muuu",
          "train": "ciuf ciuf",
@@ -15,12 +16,16 @@ errors = 0
 
 def our_tts(text):
     engine = pyttsx3.init()
+    engine.setProperty('rate', 125)
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[1].id)
     engine.say(text)
     engine.runAndWait()
 
 def text_2_speech(text):
     service = rospy.ServiceProxy('tts', Text2Speech)
     _ = service(text)
+
 
 tts = our_tts
 
@@ -52,17 +57,22 @@ def parse_args():
 if __name__ == "__main__":
     objs = parse_args()
     check(objs)
-    rospy.init_node('main_node')
-    rospy.loginfo("===============================================")
-    rospy.loginfo("===============================================")
-    #say_call('car', 'bruuum')
+    rospy.init_node('main_node', anonymous=True)
+    rospy.Subscriber("/audio_classification", ClassifiedData)
+    while not rospy.is_shutdown():
+        for obj in objs:
+            say_call(obj, calls[obj])
+            rospy.loginfo('waiting...')
+            data = rospy.wait_for_message('/audio_classification', ClassifiedData)
+            class_label = data.class_label
+            rospy.loginfo('predicted class:' + class_label)
 
-    rospy.loginfo("===============================================")
-    rospy.loginfo("===============================================")
-
-    while(errors < 3):
-        #moveToObj(num)
-        say_call(obj, call)
-        listen()
+            if not class_label == obj:
+                errors += 1
+                if errors == 3:
+                    tts('Retry')
+                    sys.exit()
+        tts('Very well')
+        break
 
 
