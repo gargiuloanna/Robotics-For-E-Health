@@ -1,0 +1,9 @@
+<launch>
+  <arg name="object1" default = "train" />
+  <arg name="object2" default = "cow"/>
+  <arg name="object3" default = "sheep"/>
+  <arg name="object4" default = "car" />
+  <arg name="object5" default = "dog" />
+
+  <node pkg="project" type="main.py" name="main_node" required="true" args="--1 $(arg object1) --2 $(arg object2) --3 $(arg object3) --4 $(arg object4) --5 $(arg object5)" output="screen" />
+</launch>
