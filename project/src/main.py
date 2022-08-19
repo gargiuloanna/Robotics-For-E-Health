@@ -4,6 +4,7 @@ import rospy
 import sys
 import pyttsx3
 from microfono.msg import ClassifiedData
+from nao_nodes.srv import Text2Speech
 
 
 calls = {"cow": "muuu",
@@ -27,9 +28,6 @@ def text_2_speech(text):
     _ = service(text)
 
 
-tts = our_tts
-
-
 def say_call(obj, call):
     tts(str("This is " + obj))
     rospy.sleep(2)
@@ -49,14 +47,20 @@ def parse_args():
     parser.add_option("--3", dest="ob3", default="sheep")
     parser.add_option("--4", dest="ob4", default="car")
     parser.add_option("--5", dest="ob5", default='dog')
+    parser.add_option("--test", dest="test", default='0')
     (options, args) = parser.parse_args()
     return [options.ob1.lower(), options.ob2.lower(), options.ob3.lower(), options.ob4.lower(),
-            options.ob5.lower()]
+            options.ob5.lower()], options.test
 
 
 if __name__ == "__main__":
-    objs = parse_args()
+    objs , test= parse_args()
     check(objs)
+    if test == '1':
+        tts = our_tts
+    else:
+        #tts = text_2_speech #TODO see if it works with nao
+        tts = rospy.loginfo
     rospy.init_node('main_node', anonymous=True)
     rospy.Subscriber("/audio_classification", ClassifiedData)
     while not rospy.is_shutdown():
