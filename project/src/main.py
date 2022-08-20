@@ -3,7 +3,7 @@ from optparse import OptionParser
 import rospy
 import sys
 import pyttsx3
-from microfono.msg import ClassifiedData
+from sound_recognition.msg import ClassifiedData
 from nao_nodes.srv import Text2Speech
 
 
