@@ -20,8 +20,6 @@ class AudioClassificationNode:
                               threshold=0.9)
         rospy.loginfo("clf ok")
         self.pub = rospy.Publisher("/audio_classification", ClassifiedData, queue_size=3)  # TODO: remove if not used
-
-    def listen(self):
         while not rospy.is_shutdown():
             rospy.loginfo("Waiting...")
             try:
@@ -41,6 +39,5 @@ if __name__ == "__main__":
     ssr = AudioClassificationNode()
     try:
         ssr.start()
-        ssr.listen()
     except rospy.exceptions.ROSInterruptException:
         pass
