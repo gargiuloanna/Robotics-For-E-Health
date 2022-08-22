@@ -61,7 +61,7 @@ class SpeechDetectionNode:
         if self.test:
             source = Microphone(None, 16000, 2720)
         else:
-            ROSMicrophoneSource(None, 16000, 2720)
+            source = ROSMicrophoneSource(None, 16000, 2720)
         # VAD initialization        
         self.speechRecognition = SpeechRecognitionVAD(
             device_index=None,
