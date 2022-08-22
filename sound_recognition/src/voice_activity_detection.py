@@ -14,7 +14,6 @@ from time import sleep
 import soundfile as sf
 from queue import Queue
 
-
 class ROSMicrophoneSource(AudioSource):
 
     def __init__(self, device_index=None, sample_rate=None, chunk_size=2720):
@@ -22,10 +21,11 @@ class ROSMicrophoneSource(AudioSource):
         self.format = 8  # 16-bit int sampling
         self.SAMPLE_WIDTH = 2  # size in bytes of each sample (2 = 16 bit -> int16)
         self.SAMPLE_RATE = sample_rate  # sampling rate in Hertz
-        self.CHUNK = chunk_size  # number of frames stored in each buffer, window size
+        self.CHUNK = chunk_size  # number of frames stored in each buffer
 
         self.audio = None
         self.stream = None
+
 
     def __enter__(self):
         self.stream = self.ROSAudioStream()
@@ -44,6 +44,7 @@ class ROSMicrophoneSource(AudioSource):
             if self.buffer is not None:
                 self.buffer.put(np.array(audio.data, dtype='int16').tobytes())
 
+
         def read(self, chunk):
             self.buffer = Queue() if self.buffer is None else self.buffer
             return self.buffer.get()
@@ -54,6 +55,7 @@ class SpeechDetectionNode:
     def __init__(self, test_value=False):
         self.test = test_value
 
+
     def start(self):
         # Node and publisher initialization
         pub = rospy.Publisher('speech_detection', SpeechData, queue_size=3)
@@ -61,38 +63,38 @@ class SpeechDetectionNode:
         if self.test:
             source = Microphone(None, 16000, 2720)
         else:
-            source = ROSMicrophoneSource(None, 16000, 2720)
+            source = ROSMicrophoneSource(None, 16000, 2720)            
+
         # VAD initialization        
         self.speechRecognition = SpeechRecognitionVAD(
-            device_index=None,
-            sample_rate=16000,
-            chunk_size=2720,
-            timeout=0,
-            phrase_time_limit=5,  # if put to None, the sounds heard can be of infinite lenght
-            calibration_duration=1,
-            # the method works by using an energy threshold, so to calibrate the threshould the noise energy in
-            # the environment has to be known, the calibration factor che used
-            format='int16',
-            source=source
+            device_index = None,
+            sample_rate = 16000,
+            chunk_size = 2720,
+            timeout = 0,
+            phrase_time_limit = 5,
+            calibration_duration = 1,
+            format = 'int16',
+            source = source
         )
+
 
         # Environment calibration
         self.speechRecognition.calibrate()
-        self.speechRecognition.get_speech_frame(timeout=1)  # waits till the timeout to go on
+        self.speechRecognition.get_speech_frame(timeout = 1)
 
         # Loop
         while not rospy.is_shutdown():
 
             # Get speech data
-            # rospy.loginfo("Calibrating...")
-            self.speechRecognition.calibrate()  # dynamic calibration manages variations in the sound
-            # rospy.loginfo("Recording...")
+            #rospy.loginfo("Calibrating...")
+            self.speechRecognition.calibrate()
+            #rospy.loginfo("Recording...")
             speech, timestamps = self.speechRecognition.get_speech_frame()
-
+            
             if speech is None:
                 continue
-
-            # Message preparing if speech is not none
+            
+            # Message preparing
             msg = SpeechData()
             msg.data = speech
             msg.start_time = timestamps[0]
@@ -100,9 +102,9 @@ class SpeechDetectionNode:
 
             # Message publishing
             pub.publish(msg)
+            #print("msg: ", msg.start_time, '--------time=', (msg.end_time - msg.start_time)) # TODO remove
 
             rospy.logdebug('Speech published with timestamps')
-
 
 if __name__ == '__main__':
     parser = OptionParser()
@@ -111,4 +113,4 @@ if __name__ == '__main__':
     test = True if options.test == '1' else False
     speech_detection = SpeechDetectionNode(test)
     speech_detection.start()
-
+    

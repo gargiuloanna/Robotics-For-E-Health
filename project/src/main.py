@@ -1,25 +1,24 @@
 #!/usr/bin/env python3
+from concurrent.futures import thread
 from optparse import OptionParser
 import rospy
 import sys
 import pyttsx3
 from sound_recognition.msg import ClassifiedData
 from nao_nodes.srv import Text2Speech
+from std_msgs.msg import Bool
 
-
-calls = {"cow": "muuu",
-         "train": "ciuf ciuf",
-         "car": "brum brum",
-         "sheep": "beeeee",
+calls = {"cow": "mouu",
+         "train": "ciuff ciuff",
+         "car": "bruuum bruuum",
+         "sheep": "beeeeheh",
          "dog": "bau bau"}
-
-errors = 0
 
 def our_tts(text):
     engine = pyttsx3.init()
     engine.setProperty('rate', 125)
     voices = engine.getProperty('voices')
-    engine.setProperty('voice', voices[1].id)
+    engine.setProperty('voice', voices[0].id)
     engine.say(text)
     engine.runAndWait()
 
@@ -52,6 +51,15 @@ def parse_args():
     return [options.ob1.lower(), options.ob2.lower(), options.ob3.lower(), options.ob4.lower(),
             options.ob5.lower()], options.test
 
+def work_with(obj):
+    global pub
+    say_call(obj, calls[obj])
+    #rospy.sleep(x)
+    pub.publish(True)
+    data = rospy.wait_for_message('/audio_classification', ClassifiedData)
+    rospy.loginfo('predicted class:' + data.hypothesis)
+    return data.class_label
+
 
 if __name__ == "__main__":
     objs , test= parse_args()
@@ -61,22 +69,25 @@ if __name__ == "__main__":
     else:
         #tts = text_2_speech #TODO see if it works with nao
         tts = rospy.loginfo
+
+
     rospy.init_node('main_node', anonymous=True)
+    pub = rospy.Publisher("/listen_start",Bool, queue_size=1)
+    rospy.Subscriber("/system_ready", Bool)
     rospy.Subscriber("/audio_classification", ClassifiedData)
+    errors = 0
+    while not rospy.wait_for_message("/system_ready", Bool):
+        pass
     while not rospy.is_shutdown():
         for obj in objs:
-            say_call(obj, calls[obj])
-            rospy.loginfo('waiting...')
-            data = rospy.wait_for_message('/audio_classification', ClassifiedData)
-            class_label = data.class_label
-            rospy.loginfo('predicted class:' + class_label)
-
-            if not class_label == obj:
+            while(work_with(obj)!=obj):
                 errors += 1
                 if errors == 3:
                     tts('Retry')
                     sys.exit()
         tts('Very well')
         break
+
+
 
 
