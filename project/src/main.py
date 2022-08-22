@@ -21,6 +21,8 @@ def our_tts(text):
     engine.setProperty('voice', voices[0].id)
     engine.say(text)
     engine.runAndWait()
+    rospy.Publisher("/listen_start", Bool, queue_size=1).publish(True)
+
 
 def text_2_speech(text):
     service = rospy.ServiceProxy('tts', Text2Speech)
@@ -28,9 +30,7 @@ def text_2_speech(text):
 
 
 def say_call(obj, call):
-    tts(str("This is " + obj))
-    rospy.sleep(2)
-    tts(str("repeat" + call))
+    tts(str("This is " + obj) + str(" repeat" + call))
 
 
 def check(objects):
@@ -52,10 +52,10 @@ def parse_args():
             options.ob5.lower()], options.test
 
 def work_with(obj):
-    global pub
+    #global pub
     say_call(obj, calls[obj])
     #rospy.sleep(x)
-    pub.publish(True)
+    #pub.publish(True)
     data = rospy.wait_for_message('/audio_classification', ClassifiedData)
     rospy.loginfo('predicted class:' + data.hypothesis)
     return data.class_label
@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
 
     rospy.init_node('main_node', anonymous=True)
-    pub = rospy.Publisher("/listen_start",Bool, queue_size=1)
+    # pub = rospy.Publisher("/listen_start",Bool, queue_size=1)
     rospy.Subscriber("/system_ready", Bool)
     rospy.Subscriber("/audio_classification", ClassifiedData)
     errors = 0
