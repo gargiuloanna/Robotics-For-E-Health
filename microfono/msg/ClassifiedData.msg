@@ -1,3 +1,0 @@
-str class_label
-float64 probability
-str hypothesis
