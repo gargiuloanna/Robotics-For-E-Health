@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-from concurrent.futures import thread
+
 from optparse import OptionParser
 import rospy
 import sys
-import pyttsx3
-from sound_recognition.msg import ClassifiedData
+from audio_rec.msg import ClassifiedData
 from nao_nodes.srv import Text2Speech
-from std_msgs.msg import Bool
+from project.srv import Text2Speech_pyttsx3
 
 calls = {"cow": "mouu",
          "train": "ciuff ciuff",
@@ -15,13 +14,8 @@ calls = {"cow": "mouu",
          "dog": "bau bau"}
 
 def our_tts(text):
-    engine = pyttsx3.init()
-    engine.setProperty('rate', 125)
-    voices = engine.getProperty('voices')
-    engine.setProperty('voice', voices[0].id)
-    engine.say(text)
-    engine.runAndWait()
-    rospy.Publisher("/listen_start", Bool, queue_size=1).publish(True)
+    service = rospy.ServiceProxy('tts_pyttsx3', Text2Speech_pyttsx3)
+    _ = service(text)
 
 
 def text_2_speech(text):

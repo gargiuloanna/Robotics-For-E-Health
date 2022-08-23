@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from sound_recognition.msg import SpeechData
+from audio_rec.msg import SpeechData
 
 from std_msgs.msg import String
 import argparse
