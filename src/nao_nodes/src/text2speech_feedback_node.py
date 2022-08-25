@@ -9,11 +9,10 @@ from naoqi import ALProxy
 from naoqi import ALBroker
 from naoqi import ALModule
 
-
 from optparse import OptionParser
 
 # Global variable to store the speech module instance
-Speech = None
+Speech = None # deve essere inserito come secondo parametro nella subscribe to event
 memory = None
 
 class SpeechModule(ALModule):
@@ -22,7 +21,7 @@ class SpeechModule(ALModule):
         ALModule.__init__(self, name)
         # Create a proxy to ALTextToSpeech for later use
         # self.memory = ALProxy("ALMemory", ip, port)
-        self.pub = rospy.Publisher("/listen_start", Bool, queue_size = 1)
+        self.pub = rospy.Publisher("/listen_start", Bool, queue_size=1)
         global memory
         memory = ALProxy("ALMemory", pip, pport)
         # Subscribe to the FaceDetected event:
@@ -38,7 +37,7 @@ class SpeechModule(ALModule):
         if value[1] == "done":
             global memory
             memory.unsubscribeToEvent("ALTextToSpeech/Status", "Speech")
-            rospy.loginfo("listen_start")#TODO remove
+            rospy.loginfo("listen_start") #TODO remove
             self.pub.publish(True)
             memory.subscribeToEvent("ALTextToSpeech/Status", "Speech", "onStatusDone")
 
