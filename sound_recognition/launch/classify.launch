@@ -1,5 +1,0 @@
-<launch>
-  <arg name="test" default = "0"/>
-  <node pkg="sound_recognition" type="voice_activity_detection.py" name="voice_activity_detection" required="true" output="screen" args="--test $(arg test)"/>
-  <node pkg="sound_recognition" type="audio_classification.py" name="audio_recognition_node" required="true" output="screen" />
-</launch>

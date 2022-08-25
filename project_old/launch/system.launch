@@ -1,0 +1,14 @@
+<launch>
+  <arg name="object1" default = "train" />
+  <arg name="object2" default = "cow" />
+  <arg name="object3" default = "sheep"/>
+  <arg name="object4" default = "car" />
+  <arg name="object5" default = "dog" />
+  <arg name="test" default = "0"/> <!-- 0 means testing false any other value will refer to true -->
+
+  <include file="src/nao_nodes/launch/nao_bringup.launch" unless="$(arg test)"  output="screen"/>
+  <node pkg="sound_recognition" type="audio_classification.py" name="audio_recognition_node" required="true" output="screen"/>
+  <node pkg="sound_recognition" type="voice_activity_detection.py" name="voice_activity_detection" required="true" output="screen" args="--test $(arg test)"/>
+  <node pkg="project" type="main.py" name="main_node" required="true" args="--1 $(arg object1) --2 $(arg object2) --3 $(arg object3) --4 $(arg object4) --5 $(arg object5) --test $(arg test)" output="screen" />
+
+</launch>
