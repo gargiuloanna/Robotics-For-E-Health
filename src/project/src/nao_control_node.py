@@ -8,6 +8,8 @@ import math
 from std_msgs.msg import Float32MultiArray, Int16MultiArray
 from sensor_msgs.msg import Image
 
+import motion
+
 lroll = rospy.Publisher(f'/arm_rotation/shoulder/left/roll', Float32MultiArray, queue_size=1)
 lpitch = rospy.Publisher(f'/arm_rotation/shoulder/left/pitch', Float32MultiArray, queue_size=1)
 rroll = rospy.Publisher(f'/arm_rotation/shoulder/right/roll', Float32MultiArray, queue_size=1)
@@ -31,34 +33,6 @@ def camera():
 def mic():
     data = rospy.wait_for_message('nao_mic_data',Int16MultiArray)
     rospy.loginfo(data.data[:5])
-
-# Subscribers
-
-def arm_shoulder(pitch, roll, speed =1, left = False):
-    msg1 = Float32MultiArray()
-    msg2 = Float32MultiArray()
-
-    msg1.data = [roll,speed]
-    msg2.data = [pitch,speed]
-    
-    if left:
-        lroll.publish(msg1)
-        lpitch.publish(msg2)
-    else:
-        rroll.publish(msg1)
-        rpitch.publish(msg2)
-
-def head(pitch, yaw, speed =1):
-
-    msg1 = Float32MultiArray()
-    msg2 = Float32MultiArray()
-
-    msg1.data = [pitch,speed]
-    msg2.data = [yaw,speed]
-    
-    hpitch.publish(msg1)
-    hyaw.publish(msg2)
-
 
 # Services
 
@@ -136,7 +110,7 @@ if __name__ == '__main__':
     # wakeup()
     # locomotion(1,1,0.5)
     text_2_speech('Start')
-
+    motion
     # Subscribers
 
     # head(0.2,-0.2, 0.2)
@@ -171,3 +145,5 @@ if __name__ == '__main__':
         move_to_next('Treno')
         rospy.sleep(5)
         move_to_rest()
+
+
