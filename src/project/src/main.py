@@ -4,9 +4,10 @@ from optparse import OptionParser
 import rospy
 import sys
 from sound_recognition.msg import ClassifiedData
-from nao_nodes.srv import Text2Speech
+from nao_nodes.srv import Text2Speech, WakeUp
 from project.srv import Text2Speech_pyttsx3
 from std_msgs.msg import Bool
+from nao_motion import Motion
 
 calls = {"cow": "mouu",
          "train": "ciuff ciuff",
@@ -33,6 +34,9 @@ def check(objects):
         if obj not in calls.keys():
             sys.exit(str("Nao doesn't know " + obj))
 
+def wakeup():
+    service = rospy.ServiceProxy('wakeup', WakeUp)
+    _ = service()
 
 def parse_args():
     parser = OptionParser()
@@ -46,16 +50,36 @@ def parse_args():
     return [options.ob1.lower(), options.ob2.lower(), options.ob3.lower(), options.ob4.lower(),
             options.ob5.lower()], options.test
 
-def work_with(obj):
+def work_with(obj, m, pos):
     #global pub
+    if pos == 0:
+        m.arm_elbow(-68.6, -0.7, left = True, speed = 0.3)
+        m.arm_shoulder(53, 42.5, left = True, speed = 0.3)
+        m.head(5, 50, speed = 0.3)
+    elif pos == 1:
+        m.arm_elbow(-88.7, -23.5, left = True, speed = 0.3)
+        m.arm_shoulder(53, 18.1, left = True, speed = 0.3)
+        m.head(5, 30, speed = 0.3)
+    elif pos == 2:
+        m.arm_elbow(-94.7, -17.8, left = True, speed = 0.3)
+        m.arm_shoulder(53, 2.6, left = True, speed = 0.3)
+        m.arm_elbow(94.7, 17.8, speed = 0.3)
+        m.arm_shoulder(53, 2.6, speed = 0.3)
+        m.head(5.4, 0, speed = 0.3)
+    elif pos == 3:
+        m.arm_elbow(88.7, 23.5, speed = 0.3)
+        m.arm_shoulder(53, -18.1, speed = 0.3)
+        m.head(5, -30, speed = 0.3)
+    elif pos == 4:
+        m.arm_elbow(68.6, 0.7, speed = 0.3)
+        m.arm_shoulder(53, -42.5, speed = 0.3)
+        m.head(5, -50, speed = 0.3)
+    
     say_call(obj, calls[obj])
-    #rospy.sleep(x)
-    #pub.publish(True)
     data = rospy.wait_for_message('/audio_classification', ClassifiedData)
     print('predicted class:' + data.hypothesis + ' with ' + str(data.probability) + '% '+ 'of confidence')# TODO remove
-    #rospy.loginfo('predicted class:' + data.hypothesis)
-    #return data.class_label
-    return data.hypothetis
+    wakeup()
+    return data.hypothesis
 
 
 if __name__ == "__main__":
@@ -67,17 +91,16 @@ if __name__ == "__main__":
         tts = text_2_speech #TODO see if it works with nao
         #tts = rospy.loginfo
 
-
+    m = Motion()
     rospy.init_node('main_node', anonymous=True)
     # pub = rospy.Publisher("/listen_start",Bool, queue_size=1)
     rospy.Subscriber("/system_ready", Bool)
     rospy.Subscriber("/audio_classification", ClassifiedData)
     errors = 0
-    while not rospy.wait_for_message("/system_ready", Bool):
-        pass
+    rospy.wait_for_message("/system_ready", Bool)
     while not rospy.is_shutdown():
         for obj in objs:
-            while(work_with(obj)!=obj):
+            while(work_with(obj, m, objs.index(obj))!=obj):
                 print("entro nel while del main")
                 errors += 1
                 if errors == 3:

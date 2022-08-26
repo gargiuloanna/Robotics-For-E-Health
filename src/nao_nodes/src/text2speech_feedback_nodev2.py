@@ -40,7 +40,7 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     event_broker = ALBroker("event_broker", "0.0.0.0", 0,
-                            options.ip, options.port)
+                            options.ip, int(options.port))
     global tts_event_watcher
-    tts_event_watcher = TTSEventWatcher(options.ip, options.port)
+    tts_event_watcher = TTSEventWatcher(options.ip, int(options.port))
     tts_event_watcher.start()

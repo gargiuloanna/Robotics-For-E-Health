@@ -8,7 +8,7 @@ import math
 from std_msgs.msg import Float32MultiArray, Int16MultiArray
 from sensor_msgs.msg import Image
 
-import motion
+from nao_motion import Motion
 
 lroll = rospy.Publisher(f'/arm_rotation/shoulder/left/roll', Float32MultiArray, queue_size=1)
 lpitch = rospy.Publisher(f'/arm_rotation/shoulder/left/pitch', Float32MultiArray, queue_size=1)
@@ -102,16 +102,63 @@ def move_to_rest():
 
 if __name__ == '__main__':
     rospy.init_node('nao_control', anonymous=True)
-    rospy.wait_for_service('tts') # Waiting for at least one Nao service on
-
+    if False:
+        rospy.wait_for_service('tts') # Waiting for at least one Nao service on
+        text_2_speech('Start')
     # Services
 
-    # rest()
-    # wakeup()
+    #rest()
+    wakeup()
     # locomotion(1,1,0.5)
-    text_2_speech('Start')
-    motion
     # Subscribers
+    m = Motion()
+    m.arm_elbow(-68.6, -0.7, left = True)
+    m.arm_shoulder(53, 42.5, left = True)
+    m.head(5, 50, speed = 0.3)
+
+    rospy.sleep(2)
+    wakeup()
+    rospy.sleep(2)
+
+    m.arm_elbow(-88.7, -23.5, left = True)
+    m.arm_shoulder(53, 18.1, left = True)
+    m.head(5, 30, speed = 0.3)
+
+    rospy.sleep(2)
+    wakeup()
+    rospy.sleep(2)
+
+    m.arm_elbow(-94.7, -17.8, left = True)
+    m.arm_shoulder(53, 2.6, left = True)
+    m.arm_elbow(94.7, 17.8)
+    m.arm_shoulder(53, 2.6)
+    m.head(5.4, 0, speed = 0.3)
+
+    rospy.sleep(2)
+    wakeup()
+    rospy.sleep(2)
+
+    m.arm_elbow(88.7, 23.5)
+    m.arm_shoulder(53, -18.1)
+    m.head(5, -30, speed = 0.3)
+
+    rospy.sleep(2)
+    wakeup()
+    rospy.sleep(2)
+    
+    m.arm_elbow(68.6, 0.7)
+    m.arm_shoulder(53, -42.5)
+    m.head(5, -50, speed = 0.3)
+    
+
+
+
+
+
+    rospy.spin()
+    #rest()
+    wakeup()    
+
 
     # head(0.2,-0.2, 0.2)
     # arm_shoulder(0.2,-0.2,0.2)

@@ -15,10 +15,10 @@ class Text2SpeechNode:
 
     def say(self, msg):
         try:
-            self.tts.say(msg.speech)
+            self.tts.say(msg.speech, "English")
         except:
             self.tts = ALProxy("ALTextToSpeech", self.ip, self.port)
-            self.tts.say(msg.speech)
+            self.tts.say(msg.speech, "English")
         return "ACK"
     
     def start(self):

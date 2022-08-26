@@ -39,8 +39,8 @@ class WakeUpNode:
 
     def start(self):
         rospy.init_node("wakeup_node", anonymous=True)
-        #self.wakeup()# TODO comment if foot gives problem
-        #self.stand()        
+        self.wakeup()# TODO comment if foot gives problem
+        self.stand()        
         rospy.Service("wakeup", WakeUp, self.wakeup)
         rospy.Service("rest", Rest, self.rest)
         rospy.spin()
@@ -57,4 +57,4 @@ if __name__ == "__main__":
     except rospy.ROSInterruptException:
         pass
     
-    node.rest()
+   # node.rest()

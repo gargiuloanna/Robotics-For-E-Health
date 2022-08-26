@@ -10,7 +10,7 @@
   <include file="src/nao_nodes/launch/nao_bringup.launch" unless="$(arg test)" >
     <arg name="nao_ip" value="$(arg nao_ip)"/>
   </include>
-  <include file="src/sound_recognition/launch/classify.launch" unless="$(arg test)" >
+  <include file="src/sound_recognition/launch/classify.launch" >
     <arg name="test" value="$(arg test)"/>
   </include>
   <node pkg="project" type="text2speech_pyttsx3_node.py" name="text2speech_pyttsx3_node"  if ="$(arg test)" required="true" output="screen"/>
