@@ -61,10 +61,10 @@ def parse_args():
     parser.add_option("--4", dest="ob4", default="car")
     parser.add_option("--5", dest="ob5", default='dog')
     parser.add_option("--test", dest="test", default='0')
-    parser.add_option("--patient", dest="patient", default='Salvatore')
+    parser.add_option("--errors", dest="errors", default=3)
     (options, args) = parser.parse_args()
     return [options.ob1.lower(), options.ob2.lower(), options.ob3.lower(), options.ob4.lower(),
-            options.ob5.lower()], options.test, options.patient
+            options.ob5.lower()], options.test, options.errors
 
 def work_with(obj, m, pos):
     point_to_pos(m, pos)   
@@ -81,7 +81,7 @@ def work_with(obj, m, pos):
         return label
     
 if __name__ == "__main__":
-    objs , test, patient= parse_args()
+    objs , test, max_errors= parse_args()
     check(objs)
     if test == '1':
         tts = pc_tts
@@ -105,7 +105,7 @@ if __name__ == "__main__":
             while(work_with(obj, m, objs.index(obj))!=obj):
                 print()
                 errors += 1
-                if errors == 3:
+                if errors == max_errors:
                     tts('Retry')
                     sys.exit()
         tts('Very well')
