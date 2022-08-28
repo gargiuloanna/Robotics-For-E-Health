@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from naoqi import ALProxy
 from optparse import OptionParser
-from nao_nodes.srv import *
+from nao_nodes.srv import WakeUp, Rest
 import rospy
 
 class WakeUpNode:
@@ -31,7 +31,6 @@ class WakeUpNode:
             self.posture_proxy = ALProxy("ALRobotPosture", self.ip, self.port)
             self.motion_proxy.wakeUp()
             self.stand()         
-
         return "ACK"   
 
     def stand(self, *args):
@@ -39,7 +38,7 @@ class WakeUpNode:
 
     def start(self):
         rospy.init_node("wakeup_node", anonymous=True)
-        self.wakeup()# TODO comment if foot gives problem
+        self.wakeup()
         self.stand()        
         rospy.Service("wakeup", WakeUp, self.wakeup)
         rospy.Service("rest", Rest, self.rest)
@@ -56,5 +55,3 @@ if __name__ == "__main__":
         node.start()
     except rospy.ROSInterruptException:
         pass
-    
-   # node.rest()

@@ -15,19 +15,31 @@ calls = {"cow": "mouu",
          "sheep": "beeeeheh",
          "dog": "bau bau"}
 
-def our_tts(text):
+yelbow = [-68.6, -88.7, -94.7, 88.7, 68.6]
+relbow = [-0.7, -23.5, -17.8, 23.5, 0.7]
+pshoulder = [53, 53, 53, 53, 53]
+rshoulder = [42.5, 18.1, 2.6, -18.1, -42.5]
+left_arm = [True, True, True, False, False]
+phead = [5, 5, 5.4, 5, 5]
+yhead = [50, 30, 0, -30, -50]
+speed = [0.2, 0.15, 0.15, 0.15, 0.2]
+
+def point_to_pos(m, p):
+    m.arm_elbow(yelbow[p], relbow[p],left_arm[p], speed[p])
+    m.arm_shoulder(pshoulder[p], rshoulder[p], left_arm[p], speed[p])
+    m.head(phead[p], yhead[p], speed[p])
+
+def pc_tts(text):
     service = rospy.ServiceProxy('tts_pyttsx3', Text2Speech_pyttsx3)
     _ = service(text)
-
 
 def text_2_speech(text):
     service = rospy.ServiceProxy('tts', Text2Speech)
     _ = service(text)
 
-
 def say_call(obj, call):
+    rospy.loginfo("pronounce "+call)
     tts(str("This is " + obj) + str(" repeat" + call))
-
 
 def check(objects):
     for obj in objects:
@@ -38,6 +50,9 @@ def wakeup():
     service = rospy.ServiceProxy('wakeup', WakeUp)
     _ = service()
 
+def no_op():
+    pass
+
 def parse_args():
     parser = OptionParser()
     parser.add_option("--1", dest="ob1", default="train")
@@ -46,54 +61,41 @@ def parse_args():
     parser.add_option("--4", dest="ob4", default="car")
     parser.add_option("--5", dest="ob5", default='dog')
     parser.add_option("--test", dest="test", default='0')
+    parser.add_option("--patient", dest="patient", default='Salvatore')
     (options, args) = parser.parse_args()
     return [options.ob1.lower(), options.ob2.lower(), options.ob3.lower(), options.ob4.lower(),
-            options.ob5.lower()], options.test
+            options.ob5.lower()], options.test, options.patient
 
 def work_with(obj, m, pos):
-    #global pub
-    if pos == 0:
-        m.arm_elbow(-68.6, -0.7, left = True, speed = 0.3)
-        m.arm_shoulder(53, 42.5, left = True, speed = 0.3)
-        m.head(5, 50, speed = 0.3)
-    elif pos == 1:
-        m.arm_elbow(-88.7, -23.5, left = True, speed = 0.3)
-        m.arm_shoulder(53, 18.1, left = True, speed = 0.3)
-        m.head(5, 30, speed = 0.3)
-    elif pos == 2:
-        m.arm_elbow(-94.7, -17.8, left = True, speed = 0.3)
-        m.arm_shoulder(53, 2.6, left = True, speed = 0.3)
-        m.arm_elbow(94.7, 17.8, speed = 0.3)
-        m.arm_shoulder(53, 2.6, speed = 0.3)
-        m.head(5.4, 0, speed = 0.3)
-    elif pos == 3:
-        m.arm_elbow(88.7, 23.5, speed = 0.3)
-        m.arm_shoulder(53, -18.1, speed = 0.3)
-        m.head(5, -30, speed = 0.3)
-    elif pos == 4:
-        m.arm_elbow(68.6, 0.7, speed = 0.3)
-        m.arm_shoulder(53, -42.5, speed = 0.3)
-        m.head(5, -50, speed = 0.3)
-    
+    point_to_pos(m, pos)   
     say_call(obj, calls[obj])
-    data = rospy.wait_for_message('/audio_classification', ClassifiedData)
-    print('predicted class:' + data.hypothesis + ' with ' + str(data.probability) + '% '+ 'of confidence')# TODO remove
-    wakeup()
-    return data.hypothesis
-
-
+    try:
+        data = rospy.wait_for_message('/audio_classification', ClassifiedData)
+        rospy.loginfo('predicted class:' + data.hypothesis + ' with ' + str(data.probability) + '% '+ 'of confidence')
+        label = data.class_label
+    except:
+        label = None
+        rospy.loginfo("oh no")
+    finally:
+        stand()
+        return label
+    
 if __name__ == "__main__":
-    objs , test= parse_args()
+    objs , test, patient= parse_args()
     check(objs)
     if test == '1':
-        tts = our_tts
+        tts = pc_tts
+        rospy.wait_for_service('tts_pyttsx3')
+        stand = no_op
     else:
-        tts = text_2_speech #TODO see if it works with nao
-        #tts = rospy.loginfo
+        tts = text_2_speech
+        rospy.wait_for_service('tts')
+        stand = wakeup
+        rospy.wait_for_service('wakeup')
 
     m = Motion()
     rospy.init_node('main_node', anonymous=True)
-    # pub = rospy.Publisher("/listen_start",Bool, queue_size=1)
+    #tts("Hello" + patient + "\\pau=500\\ we're going to do an exercise")
     rospy.Subscriber("/system_ready", Bool)
     rospy.Subscriber("/audio_classification", ClassifiedData)
     errors = 0
@@ -101,7 +103,7 @@ if __name__ == "__main__":
     while not rospy.is_shutdown():
         for obj in objs:
             while(work_with(obj, m, objs.index(obj))!=obj):
-                print("entro nel while del main")
+                print()
                 errors += 1
                 if errors == 3:
                     tts('Retry')

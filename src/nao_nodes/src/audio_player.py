@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from naoqi import ALProxy
 from optparse import OptionParser
-from nao_nodes.srv import *
+from nao_nodes.srv import AudioPlayer
 import rospy
 
 class AudioPlayerNode:

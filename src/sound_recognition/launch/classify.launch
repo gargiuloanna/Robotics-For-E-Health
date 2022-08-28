@@ -1,5 +1,6 @@
 <launch>
   <arg name="test" default = "0"/>
-  <node pkg="sound_recognition" type="voice_activity_detection.py" name="voice_activity_detection" required="true" output="screen" args="--test $(arg test)"/>
-  <node pkg="sound_recognition" type="audio_classification.py" name="audio_classification_node" required="true" output="screen" />
+  <arg name="threshold" default = "0.75"/>
+  <node pkg="sound_recognition" type="audio_detection.py" name="audio_detection" required="true" output="screen" args="--test $(arg test)"/>
+  <node pkg="sound_recognition" type="audio_classification_node.py" name="audio_classification_node" required="true" output="screen" args="--threshold $(arg threshold)"/>
 </launch>

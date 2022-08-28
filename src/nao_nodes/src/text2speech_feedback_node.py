@@ -14,14 +14,11 @@ class SpeechWatcher(object):
         app.start()
         session = app.session
         self.memory = session.service("ALMemory")
-        #self.tts = session.service("ALTextToSpeech")
         self.subscriber = self.memory.subscriber("ALTextToSpeech/TextDone")
-        self.subscriber.signal.connect(self.on_tts_status)
+        self.subscriber.signal.connect(self.on_text_done)
         self.pub = rospy.Publisher("/listen_start", String, queue_size =3)
-        # keep this variable in memory, else the callback will be disconnected
 
-    def on_tts_status(self, value):
-        rospy.loginfo(str(value))
+    def on_text_done(self, value):
         if value == 1:
             self.pub.publish(str(value)) #TODO
 
@@ -29,15 +26,13 @@ class SpeechWatcher(object):
 
 if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option("--pip", dest="ip", default="10.0.1.200")
-    parser.add_option("--pport", dest="port", default=9559)
+    parser.add_option("--ip", dest="ip", default="10.0.1.200")
+    parser.add_option("--port", dest="port", default=9559)
     (options, args) = parser.parse_args()
-    rospy.init_node('tts_feed2')
+    rospy.init_node('tts_feed')
     # Initialize qi framework
     connection_url = "tcp://" + options.ip + ":" + str(options.port)
-    rospy.loginfo("=======================================================================")
-
-    rospy.loginfo(connection_url)
+    rospy.loginfo("qi application connecting to: " + connection_url)
     app = qi.Application(["SpeechWatcher", "--qi-url=" + connection_url])
     tts_event_watcher = SpeechWatcher(app)
     rospy.spin()

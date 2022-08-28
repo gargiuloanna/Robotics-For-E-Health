@@ -81,6 +81,7 @@ class SpeechDetectionNode:
         self.speechRecognition.get_speech_frame(timeout=1)  # waits till the timeout to go on
 
         # Loop
+
         while not rospy.is_shutdown():
 
             # Get speech data
@@ -99,6 +100,7 @@ class SpeechDetectionNode:
             msg.end_time = timestamps[1]
 
             # Message publishing
+            rospy.loginfo("I'm publishing a record of "+ str(msg.end_time - msg.start_time)) # TODO remove
             pub.publish(msg)
 
             rospy.logdebug('Speech published with timestamps')

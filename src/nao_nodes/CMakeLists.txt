@@ -57,9 +57,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
-  LoadUrl.srv
   AudioPlayer.srv
-  Locomotion.srv
   Rest.srv
   Text2Speech.srv
   WakeUp.srv

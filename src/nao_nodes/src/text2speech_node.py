@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from naoqi import ALProxy
 from optparse import OptionParser
-from nao_nodes.srv import *
+from nao_nodes.srv import Text2Speech
 import rospy
 
 class Text2SpeechNode:
@@ -10,8 +10,7 @@ class Text2SpeechNode:
         self.ip = ip
         self.port = port
         self.tts = ALProxy("ALTextToSpeech", ip, port)
-
-        
+        self.tts.setParameter("speed", 150)
 
     def say(self, msg):
         try:

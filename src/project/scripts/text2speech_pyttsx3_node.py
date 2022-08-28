@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import rospy
 import pyttsx3
-from project.srv import *
+from project.srv import Text2Speech_pyttsx3
 from std_msgs.msg import String
 
 
@@ -9,7 +9,7 @@ class Text2SpeechNode_Pyttsx3:
 
     def __init__(self):
         self.tts = pyttsx3.init()
-        self.tts.setProperty('rate', 170) # TODO add rate as param of init method
+        self.tts.setProperty('rate', 150)
         voices = self.tts.getProperty('voices')
         self.tts.setProperty('voice', voices[0].id)
         self.pub = rospy.Publisher("/listen_start", String, queue_size=1)
