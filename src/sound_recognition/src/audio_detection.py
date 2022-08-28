@@ -14,14 +14,12 @@ from time import sleep
 import soundfile as sf
 from queue import Queue
 
-
-
-
 class AudioDetectionNode:
 
-    def __init__(self, test_value=False):
+    def __init__(self, test_value=False, timeout=5):
         self.test = test_value
         self.pub = None
+        self.timeout = timeout
 
     def start(self):
         # Node and publisher initialization
@@ -53,7 +51,7 @@ class AudioDetectionNode:
         # rospy.loginfo("Calibrating...")
         self.speechRecognition.calibrate()  # dynamic calibration manages variations in the sound
         # rospy.loginfo("Recording...")
-        speech, timestamps = self.speechRecognition.get_speech_frame(timeout = 5)#TODO use a variable
+        speech, timestamps = self.speechRecognition.get_speech_frame(timeout=self.timeout)
 
         msg = SpeechData()
         # publish nothing
@@ -73,12 +71,14 @@ class AudioDetectionNode:
 
         rospy.logdebug('Audio published with timestamps')
 
+
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option("--test", dest="test", default='0')
+    parser.add_option("--timeout", dest="timeout", default=5)
     (options, args) = parser.parse_args()
     test = True if options.test == '1' else False
-    speech_detection = AudioDetectionNode(test)
+    speech_detection = AudioDetectionNode(test, int(options.timeout))
     speech_detection.start()
     rospy.spin()
 

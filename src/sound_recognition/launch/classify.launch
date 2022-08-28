@@ -1,6 +1,7 @@
 <launch>
   <arg name="test" default = "0"/>
   <arg name="threshold" default = "0.75"/>
-  <node pkg="sound_recognition" type="audio_detection.py" name="audio_detection" required="true" output="screen" args="--test $(arg test)"/>
+  <arg name="timeout" default = "5"/>
+  <node pkg="sound_recognition" type="audio_detection.py" name="audio_detection" required="true" output="screen" args="--test $(arg test) --timeout $(arg timeout)"/>
   <node pkg="sound_recognition" type="audio_classification_node.py" name="audio_classification_node" required="true" output="screen" args="--threshold $(arg threshold)"/>
 </launch>

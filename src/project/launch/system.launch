@@ -5,6 +5,7 @@
   <arg name="object4" default = "car" />
   <arg name="object5" default = "dog" />
   <arg name="threshold" default = "0.75" />
+  <arg name="timeout" default = "5" />
   <arg name="patient" default = "Salvatore" />
   <arg name="test" default = "0"/> <!-- 0 means testing false any other value will refer to true -->
   <arg name="nao_ip" default = "10.0.1.200"/>
@@ -15,6 +16,7 @@
   <include file="src/sound_recognition/launch/classify.launch" >
     <arg name="test" value="$(arg test)"/>
     <arg name="threshold" value="$(arg threshold)"/>
+    <arg name="timeout" value="$(arg timeout)"/>
   </include>
   <node pkg="project" type="text2speech_pyttsx3_node.py" name="text2speech_pyttsx3_node"  if ="$(arg test)" required="true" output="screen"/>
   <node pkg="project" type="main.py" name="main_node" required="true" args="--1 $(arg object1) --2 $(arg object2) --3 $(arg object3) --4 $(arg object4) --5 $(arg object5) --test $(arg test) --patient $(arg threshold)" output="screen" />
