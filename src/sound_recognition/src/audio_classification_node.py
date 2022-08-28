@@ -49,7 +49,7 @@ class AudioClassificationNode:
                 
             # Message preparing if speech is not none
             msg = ClassifiedData()
-            msg.class_label = sound_label
+            msg.class_label = sound_label #TODO e se è None?
             msg.probability = prob
             msg.hypothesis = hyp
             self.pub.publish(msg)
