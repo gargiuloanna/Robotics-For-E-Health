@@ -1,18 +1,13 @@
 #!/usr/bin/env python3
-from threading import TIMEOUT_MAX
 import rospy
 from sound_recognition.msg import SpeechData
-from std_msgs.msg import Int16MultiArray, String
+from std_msgs.msg import String
 from optparse import OptionParser
 
 from ros_vad import SpeechRecognitionVAD
 from speech_recognition import Microphone
 from voice_activity_detection import ROSMicrophoneSource
 
-import numpy as np
-from time import sleep
-import soundfile as sf
-from queue import Queue
 
 class AudioDetectionNode:
 
