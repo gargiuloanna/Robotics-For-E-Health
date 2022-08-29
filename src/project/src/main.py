@@ -3,11 +3,22 @@
 from optparse import OptionParser
 import rospy
 import sys
+import os
 from sound_recognition.msg import ClassifiedData
 from nao_nodes.srv import Text2Speech, WakeUp
 from project.srv import Text2Speech_pyttsx3
 from std_msgs.msg import Bool
 from nao_motion import Motion
+
+from os import listdir
+from os.path import isfile, join
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+Calls = {"cow": os.path.join(dir_path,'example_sounds',"cow.wav"),
+         "train": os.path.join(dir_path,'example_sounds',"train.wav"),
+         "car": os.path.join(dir_path,'example_sounds',"car.wav"),
+         "sheep": os.path.join(dir_path,'example_sounds',"sheep.wav"),
+         "dog": os.path.join(dir_path,'example_sounds',"dog.wav")}
 
 calls = {"cow": "mouu",
          "train": "ciuff ciuff",
@@ -81,6 +92,11 @@ def work_with(obj, m, pos):
         return label
     
 if __name__ == "__main__":
+    if False:
+        for obj,path in Calls.items():
+            if isfile(os.path.join(dir_path,'example_sounds', obj+".wav")):
+                print(path)
+
     objs , test, max_errors= parse_args()
     check(objs)
     if test == '1':
@@ -110,7 +126,3 @@ if __name__ == "__main__":
                     sys.exit()
         tts('Very well')
         break
-
-
-
-

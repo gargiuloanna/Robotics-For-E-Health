@@ -61,7 +61,7 @@ class AudioDetectionNode:
             msg.end_time = timestamps[1]
 
         # Message publishing
-        rospy.loginfo("I'm publishing a record of "+ str(msg.end_time - msg.start_time)) # TODO remove
+        rospy.loginfo("I'm publishing a record of "+ str(msg.end_time - msg.start_time)+" seconds") # TODO remove
         self.pub.publish(msg)
 
         rospy.logdebug('Audio published with timestamps')
