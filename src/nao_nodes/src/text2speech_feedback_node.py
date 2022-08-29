@@ -20,7 +20,7 @@ class SpeechWatcher(object):
 
     def on_text_done(self, value):
         if value == 1:
-            self.pub.publish(str(value))
+            self.pub.publish(str(value)) #TODO
 
 
 

@@ -33,7 +33,7 @@ class AudioClassificationNode:
             data = rospy.wait_for_message('/audio_detection', SpeechData)
             voice = np.array(data.data)
             if data.start_time == data.end_time:
-                sound_label, prob, hyp = "None", 1.0, "None"
+                sound_label, prob, hyp = None, 1.0, None
             else:
                 sound_label, prob, hyp = self.clf.predict(voice)
                 
@@ -49,9 +49,9 @@ class AudioClassificationNode:
                 
             # Message preparing if speech is not none
             msg = ClassifiedData()
-            msg.class_label = sound_label #TODO e se è None?
+            msg.class_label = "None" if sound_label is None else sound_label
             msg.probability = prob
-            msg.hypothesis = hyp
+            msg.hypothesis = "None" if hyp is None else hyp
             self.pub.publish(msg)
 
             rospy.loginfo("audio classification done")

@@ -73,12 +73,13 @@ def parse_args():
     parser.add_option("--5", dest="ob5", default='dog')
     parser.add_option("--test", dest="test", default='0')
     parser.add_option("--errors", dest="errors", default=3)
+    
     (options, args) = parser.parse_args()
     return [options.ob1.lower(), options.ob2.lower(), options.ob3.lower(), options.ob4.lower(),
             options.ob5.lower()], options.test, options.errors
 
 def work_with(obj, m, pos):
-    point_to_pos(m, pos)   
+    #point_to_pos(m, pos)   
     say_call(obj, calls[obj])
     try:
         data = rospy.wait_for_message('/audio_classification', ClassifiedData)

@@ -10,7 +10,7 @@ class Text2SpeechNode:
         self.ip = ip
         self.port = port
         self.tts = ALProxy("ALTextToSpeech", ip, port)
-        self.tts.setParameter("speed", 150)
+        self.tts.setParameter("speed", 100)
 
     def say(self, msg):
         try:
