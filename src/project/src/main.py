@@ -7,7 +7,7 @@ import os
 from sound_recognition.msg import ClassifiedData
 from nao_nodes.srv import Text2Speech, WakeUp
 from project.srv import Text2Speech_pyttsx3
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, String
 from nao_motion import Motion
 
 from os import listdir
@@ -81,6 +81,11 @@ def parse_args():
 def work_with(obj, m, pos):
     #point_to_pos(m, pos)   
     say_call(obj, calls[obj])
+    pub = rospy.Publisher("/listen_start", String)
+    try:
+        rospy.wait_for_message("/listen_start", String, timeout = 3)
+    except:
+        pub.publish("Nao hasen't answered")
     try:
         data = rospy.wait_for_message('/audio_classification', ClassifiedData)
         rospy.loginfo('predicted class:' + data.hypothesis + ' with ' + str(data.probability) + '% '+ 'of confidence')

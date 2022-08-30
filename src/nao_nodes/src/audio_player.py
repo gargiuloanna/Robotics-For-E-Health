@@ -15,11 +15,11 @@ class AudioPlayerNode:
     def play(self, msg):
         try:
             fileId = self.audioPlay.loadFile(msg.path)
-            self.audioPlay.play(fileId, _async=False)
+            self.audioPlay.play(fileId, _async=False, volume = 0.5, pan = 0.5)
         except:
             self.audioPlay = ALProxy("ALAudioPlayer", self.ip, self.port)
             fileId = self.audioPlay.loadFile(msg.path)
-            self.audioPlay.play(fileId, _async=False)
+            self.audioPlay.play(fileId, _async=False, volume = 0.5, pan = 0.5)
         return "ACK"
     
     def start(self):
