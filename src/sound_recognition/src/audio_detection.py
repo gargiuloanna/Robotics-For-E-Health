@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import rospy
 from sound_recognition.msg import SpeechData
-from std_msgs.msg import String
+from std_msgs.msg import String, In16
 from optparse import OptionParser
 
 from ros_vad import SpeechRecognitionVAD
@@ -20,6 +20,7 @@ class AudioDetectionNode:
         # Node and publisher initialization
         self.pub = rospy.Publisher('audio_detection', SpeechData, queue_size=1)
         rospy.init_node('audio_detection_node')
+        self.led_pub = rospy.Publisher('/led/violet', Int16, queue_size=1)
         #rospy.sleep(2)
         rospy.Subscriber('/listen_start', String, self.listen)
         if self.test:
@@ -42,7 +43,7 @@ class AudioDetectionNode:
 
     def listen(self, data):
         rospy.loginfo("Listening...")
-
+        self.led_pub.publish(0)
         # Get speech data
         # rospy.loginfo("Calibrating...")
         self.speechRecognition.calibrate()  # dynamic calibration manages variations in the sound
