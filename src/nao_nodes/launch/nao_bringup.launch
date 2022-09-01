@@ -10,5 +10,6 @@
   <node pkg="nao_nodes" type="text2speech_feedback_node.py" name="text2speech_feed" required="true" args="--ip=$(arg nao_ip) --port=$(arg nao_port)" output="screen" />
   <node pkg="nao_nodes" type="arm_motion_node.py" name="arm_motion_node" required="true" args="--ip=$(arg nao_ip) --port=$(arg nao_port)" output="screen" />
   <node pkg="nao_nodes" type="audio_player.py" name="audio_player" required="true" args="--ip=$(arg nao_ip) --port=$(arg nao_port)" output="screen" />
-  
+  <node pkg="nao_nodes" type="led_node.py" name="led_node" required="true" args="--ip=$(arg nao_ip) --port=$(arg nao_port)" output="screen" />
+
 </launch>
