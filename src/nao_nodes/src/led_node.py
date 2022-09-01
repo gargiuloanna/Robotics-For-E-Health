@@ -1,7 +1,8 @@
 #!/usr/bin/python
 from naoqi import ALProxy
 from optparse import OptionParser
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray, String
+
 import rospy
 
 class LedsNode:
@@ -9,20 +10,20 @@ class LedsNode:
     def __init__(self, ip, port):
         self.ip = ip
         self.port = port
-        self.led_proxy = ALProxy("ALLed", ip, port)
+        self.led_proxy = ALProxy("ALLeds", ip, port)
 
     def eye(self, color):
         try:
             self.led_proxy.fadeRGB("FaceLeds", color, 5) #TODO passare timeout
         except:
-            self.led_proxy = ALProxy("ALLed", self.ip, self.port)
+            self.led_proxy = ALProxy("ALLeds", self.ip, self.port)
             self.led_proxy.fadeRGB("FaceLeds", color, 5)
 
     def ear(self, color):
         try:
             self.led_proxy.fadeRGB("EarLeds", color, 5)  # TODO passare timeout
         except:
-            self.led_proxy = ALProxy("ALLed", self.ip, self.port)
+            self.led_proxy = ALProxy("ALLeds", self.ip, self.port)
             self.led_proxy.fadeRGB("EarLeds", color, 5)
 
     def callback(self, msg):
@@ -31,7 +32,7 @@ class LedsNode:
 
     def start(self):
         rospy.init_node("led_node", anonymous=True)
-        rospy.Subscriber("/listen_start", Float32MultiArray, self.callback)
+        rospy.Subscriber("/listen_start", String, self.callback)
         rospy.spin()
 
 
