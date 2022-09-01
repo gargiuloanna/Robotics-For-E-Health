@@ -20,7 +20,7 @@ class AudioDetectionNode:
         # Node and publisher initialization
         self.pub = rospy.Publisher('audio_detection', SpeechData, queue_size=1)
         rospy.init_node('audio_detection_node')
-        rospy.sleep(2)
+        #rospy.sleep(2)
         rospy.Subscriber('/listen_start', String, self.listen)
         if self.test:
             source = Microphone(None, 16000, 2720)

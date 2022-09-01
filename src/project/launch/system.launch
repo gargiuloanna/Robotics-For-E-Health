@@ -8,7 +8,7 @@
   <arg name="timeout" default = "5" />
   <arg name="errors" default = "3" />
   <arg name="test" default = "0"/> <!-- 0 means testing false any other value will refer to true -->
-  <arg name="nao_ip" default = "10.0.1.201"/>
+  <arg name="nao_ip" default = "10.0.1.200"/>
 
   <include file="src/nao_nodes/launch/nao_bringup.launch" unless="$(arg test)" >
     <arg name="nao_ip" value="$(arg nao_ip)"/>

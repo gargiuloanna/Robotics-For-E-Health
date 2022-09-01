@@ -4,14 +4,29 @@ from optparse import OptionParser
 from std_msgs.msg import Float32MultiArray
 import rospy
 
+
 class ArmMotionNode:
+
+    """
+    A class to implement the arm motion for Nao
+    
+    Parameters:
+    ip (str): the ip adress of Nao
+    port (int): the port of Nao
+
+    """
 
     def __init__(self, ip, port):
         self.ip = ip
         self.port = port
         self.motion_proxy = ALProxy("ALMotion", ip, port)
 
+    
     def lshoulder_roll(self, msg):
+
+        """
+        The function sets the left shoulder roll angles 
+        """
         try:
             self.motion_proxy.setAngles(["LShoulderRoll"], [msg.data[0]], msg.data[1])
         except:

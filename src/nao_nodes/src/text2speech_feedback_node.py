@@ -14,19 +14,21 @@ class SpeechWatcher(object):
         app.start()
         session = app.session
         self.memory = session.service("ALMemory")
-        self.subscriber = self.memory.subscriber("ALTextToSpeech/TextDone")
+        self.subscriber = self.memory.subscriber("ALTextToSpeech/Status")
         self.subscriber.signal.connect(self.on_text_done)
+        #self.tts = session.service("ALTextToSpeech")
         self.pub = rospy.Publisher("/listen_start", String, queue_size =3)
 
     def on_text_done(self, value):
-        if value == 1:
-            self.pub.publish(str(value)) #TODO
+        rospy.loginfo(value)
+        if value[1]=="done":
+           self.pub.publish(str(value)) #TODO
 
 
 
 if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option("--ip", dest="ip", default="10.0.1.200")
+    parser.add_option("--ip", dest="ip", default="127.0.0.1")
     parser.add_option("--port", dest="port", default=9559)
     (options, args) = parser.parse_args()
     rospy.init_node('tts_feed')

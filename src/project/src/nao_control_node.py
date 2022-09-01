@@ -2,6 +2,7 @@
 
 import rospy
 from nao_nodes.srv import *
+from nao_nodes import text2speech_feedback_node_v2
 import numpy as np
 import math
 
@@ -86,15 +87,15 @@ if __name__ == '__main__':
     rospy.init_node('nao_control', anonymous=True)
     
     rospy.wait_for_service('tts') # Waiting for at least one Nao service on
-    rospy.wait_for_service('audio_play')
-    for obj,path in calls.items():
-        rospy.loginfo('This is '+ obj +'Repeat: '+ sounds[obj])
-        text_2_speech('This is '+ obj +' \\pau=1000\\ Repeat')
-        if isfile(os.path.join(dir_path,'example_sounds', obj+".wav")):
+    #rospy.wait_for_service('audio_play')
+    #for obj,path in calls.items():
+        #rospy.loginfo('This is '+ obj +'Repeat: '+ sounds[obj])
+        #text_2_speech('This is '+ obj +' \\pau=1000\\ Repeat')
+        #if isfile(os.path.join(dir_path,'example_sounds', obj+".wav")):
             #audio_player(path) #raise ServiceExcepition file is not found by AudioPlayer Task created in the loadFile method
-            pass
-        rospy.loginfo("Work with the " + obj + "is done")
-        rospy.sleep(3)
+            #pass
+        #rospy.loginfo("Work with the " + obj + "is done")
+        #rospy.sleep(3)
     text_2_speech('The task end now. \\pau=1000\\ Good luck with me.')
     # Services
 

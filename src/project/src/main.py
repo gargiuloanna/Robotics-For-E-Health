@@ -36,8 +36,8 @@ yhead = [50, 30, 0, -30, -50]
 speed = [0.2, 0.15, 0.15, 0.15, 0.2]
 
 def point_to_pos(m, p):
-    m.arm_elbow(yelbow[p], relbow[p],left_arm[p], speed[p])
-    m.arm_shoulder(pshoulder[p], rshoulder[p], left_arm[p], speed[p])
+    m.arm_elbow(yelbow[p], relbow[p],speed[p], left_arm[p])
+    m.arm_shoulder(pshoulder[p], rshoulder[p], speed[p], left_arm[p])
     m.head(phead[p], yhead[p], speed[p])
 
 def pc_tts(text):
@@ -79,13 +79,13 @@ def parse_args():
             options.ob5.lower()], options.test, options.errors
 
 def work_with(obj, m, pos):
-    #point_to_pos(m, pos)   
+    point_to_pos(m, pos)   
     say_call(obj, calls[obj])
-    pub = rospy.Publisher("/listen_start", String)
-    try:
-        rospy.wait_for_message("/listen_start", String, timeout = 3)
-    except:
-        pub.publish("Nao hasen't answered")
+    #pub = rospy.Publisher("/listen_start", String)
+    #try:
+        #rospy.wait_for_message("/listen_start", String, timeout = 3)
+    #except:
+        #pub.publish("Nao hasen't answered")
     try:
         data = rospy.wait_for_message('/audio_classification', ClassifiedData)
         rospy.loginfo('predicted class:' + data.hypothesis + ' with ' + str(data.probability) + '% '+ 'of confidence')
