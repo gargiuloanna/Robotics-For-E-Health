@@ -3,17 +3,20 @@
 from optparse import OptionParser
 import rospy
 import sys
+import os
 from sound_recognition.msg import ClassifiedData
 from nao_nodes.srv import Text2Speech, WakeUp, AudioPlayer
 from project.srv import Text2Speech_pyttsx3
 from std_msgs.msg import Bool, String, Int32
 from nao_motion import Motion
 
-sounds = {"cow": "This is a cow \\pau=100\\ repeat moooo",
-         "train": "This is a train \\pau=100\\ repeat chooff chooff",
-         "car": "This is a car \\pau=100\\ repeat vroom vroom",
-         "sheep": "This is a sheep \\pau=100\\ repeat baa",
-         "dog": "This is a dog \\pau=100\\ repeat  bow bow"}
+
+sounds = {"cow": os.path.join('/home/nao/recordings/audio_recordings','cow.wav'),
+         "train": os.path.join('/home/nao/recordings/audio_recordings','train.wav'),
+         "car": os.path.join('/home/nao/recordings/audio_recordings','car.wav'),
+         "sheep": os.path.join('/home/nao/recordings/audio_recordings','sheep.wav'),
+         "dog": os.path.join('/home/nao/recordings/audio_recordings','dog.wav')}
+
 
 yelbow = [-68.6, -88.7, -94.7, 88.7, 68.6]
 relbow = [-0.7, -23.5, -17.8, 23.5, 0.7]
@@ -37,8 +40,11 @@ def text_2_speech(text):
     service = rospy.ServiceProxy('tts', Text2Speech)
     _ = service(text)
 
+def audio_player(file):
+    service = rospy.ServiceProxy('audio_play', AudioPlayer)
+    _ = service(file)
+
 def say_call(obj):
-    
     tts(sounds[obj])
 
 def check(objects):
@@ -67,6 +73,7 @@ def parse_args():
     (options, args) = parser.parse_args()
     return [options.ob1.lower(), options.ob2.lower(), options.ob3.lower(), options.ob4.lower(),
             options.ob5.lower()], options.test, int(options.errors), options.patient
+
 def exit_routine():
     global color_pub
     color_pub.publish(0xffffff)

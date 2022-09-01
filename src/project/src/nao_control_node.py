@@ -2,7 +2,7 @@
 
 import rospy
 from nao_nodes.srv import *
-from nao_nodes import text2speech_feedback_node_v2
+#from nao_nodes import text2speech_feedback_node_v2
 import numpy as np
 import math
 
@@ -86,7 +86,7 @@ def hand(open=1,left=False):
 if __name__ == '__main__':
     rospy.init_node('nao_control', anonymous=True)
     
-    rospy.wait_for_service('tts') # Waiting for at least one Nao service on
+    rospy.wait_for_service('audio_play') # Waiting for at least one Nao service on
     #rospy.wait_for_service('audio_play')
     #for obj,path in calls.items():
         #rospy.loginfo('This is '+ obj +'Repeat: '+ sounds[obj])
@@ -98,7 +98,7 @@ if __name__ == '__main__':
         #rospy.sleep(3)
     text_2_speech('The task end now. \\pau=1000\\ Good luck with me.')
     # Services
-
+    audio_player(os.path.join('/home/nao/recordings/audio_recordings',"cow.wav"))
     if False:
         #rest()
         wakeup()
