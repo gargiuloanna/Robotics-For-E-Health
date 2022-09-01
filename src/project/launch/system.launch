@@ -8,6 +8,7 @@
   <arg name="timeout" default = "5" />
   <arg name="errors" default = "3" />
   <arg name="test" default = "0"/> <!-- 0 means testing false any other value will refer to true -->
+  <arg name="patient" default = "Salvatore"/>
   <arg name="nao_ip" default = "10.0.1.200"/>
 
   <include file="src/nao_nodes/launch/nao_bringup.launch" unless="$(arg test)" >
@@ -19,5 +20,5 @@
     <arg name="timeout" value="$(arg timeout)"/>
   </include>
   <node pkg="project" type="text2speech_pyttsx3_node.py" name="text2speech_pyttsx3_node"  if ="$(arg test)" required="true" output="screen"/>
-  <node pkg="project" type="main.py" name="main_node" required="true" args="--1 $(arg object1) --2 $(arg object2) --3 $(arg object3) --4 $(arg object4) --5 $(arg object5) --test $(arg test) --errors $(arg errors)" output="screen" />
+  <node pkg="project" type="main.py" name="main_node" required="true" args="--1 $(arg object1) --2 $(arg object2) --3 $(arg object3) --4 $(arg object4) --5 $(arg object5) --test $(arg test) --errors $(arg errors) --patient $(arg patient)" output="screen" />
 </launch>

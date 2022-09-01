@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from naoqi import ALProxy
 from optparse import OptionParser
-from std_msgs.msg import Int16
+from std_msgs.msg import Int32
 import rospy
 
 class LedsNode:
@@ -13,35 +13,43 @@ class LedsNode:
 
     def eye(self, color):
         try:
-            self.led_proxy.fadeRGB("FaceLeds", color, 5) #TODO passare timeout
+            self.led_proxy.fadeRGB("FaceLeds", color, 0)
         except:
             self.led_proxy = ALProxy("ALLeds", self.ip, self.port)
-            self.led_proxy.fadeRGB("FaceLeds", color, 5)
+            self.led_proxy.fadeRGB("FaceLeds", color, 0)
+
+    def rotateEyes(self, color):
+        try:
+            self.led_proxy.rotateEyes(color, 2, 100)
+        except:
+            self.led_proxy = ALProxy("ALLeds", self.ip, self.port)
+            self.led_proxy.rotateEyes(color, 2, 100)
 
     def ear(self, color):
         try:
-            self.led_proxy.fadeRGB("EarLeds", color, 5)  # TODO passare timeout
+            self.led_proxy.fadeRGB("EarLeds", color, 0)
         except:
             self.led_proxy = ALProxy("ALLeds", self.ip, self.port)
-            self.led_proxy.fadeRGB("EarLeds", color, 5)
-
-    def violet(self, msg):
-        self.ear(0x004b0082)
-        self.eye(0x004b0082)
-
-    def white(self, msg):
-        self.ear(0x00ffffff)
-        self.eye(0x00ffffff)
+            self.led_proxy.fadeRGB("EarLeds", color, 0)
+    
+    def reset(self, name):
+        try:
+            self.led_proxy.off(name)
+        except:
+            self.led_proxy = ALProxy("ALLeds", self.ip, self.port)
+            self.led_proxy.off(name)
 
     def set_color(self, msg):
+        self.reset("EarLeds")
+        self.reset("FaceLeds")
         self.ear(msg.data)
         self.eye(msg.data)
 
     def start(self):
         rospy.init_node("led_node", anonymous=True)
-        rospy.Subscriber("/led/violet", Int16, self.violet)
-        rospy.Subscriber("/led/white", Int16, self.white)
-        rospy.Subscriber("/led/color", Int16, self.set_color)
+        rospy.Subscriber("/led/color", Int32, self.set_color)
+        rospy.Subscriber("/led/rotate", Int32, self.rotateEyes)
+        self.rotateEyes(0x008080)
         rospy.spin()
 
 
@@ -54,5 +62,7 @@ if __name__ == "__main__":
     try:
         node = LedsNode(options.ip, int(options.port))
         node.start()
+        node.reset("FaceLeds") 
+        node.reset("EarLeds")   
     except rospy.ROSInterruptException:
         pass

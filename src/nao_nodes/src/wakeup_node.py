@@ -53,5 +53,6 @@ if __name__ == "__main__":
     try:
         node = WakeUpNode(options.ip, int(options.port))
         node.start()
+        node.rest()
     except rospy.ROSInterruptException:
         pass

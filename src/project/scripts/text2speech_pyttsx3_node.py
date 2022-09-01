@@ -2,7 +2,6 @@
 import rospy
 import pyttsx3
 from project.srv import Text2Speech_pyttsx3
-from std_msgs.msg import String
 
 
 class Text2SpeechNode_Pyttsx3:
@@ -12,13 +11,11 @@ class Text2SpeechNode_Pyttsx3:
         self.tts.setProperty('rate', 150)
         voices = self.tts.getProperty('voices')
         self.tts.setProperty('voice', voices[0].id)
-        self.pub = rospy.Publisher("/listen_start", String, queue_size=1)
         
 
     def say(self, msg):
         self.tts.say(msg.speech)
         self.tts.runAndWait()
-        self.pub.publish("True")
 
         return "ACK"
     

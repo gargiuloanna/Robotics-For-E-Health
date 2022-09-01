@@ -14,8 +14,8 @@ class AudioPlayerNode:
 
     def play(self, msg):
         try:
-            fileId = self.audioPlay.loadFile(msg.path)
-            self.audioPlay.play(fileId, _async=False, volume = 0.5, pan = 0.5)
+            self.audioPlay.playFile(msg.path)
+            #self.audioPlay.play(fileId, _async=False, volume = 0.5, pan = 0.5)
         except:
             self.audioPlay = ALProxy("ALAudioPlayer", self.ip, self.port)
             fileId = self.audioPlay.loadFile(msg.path)
@@ -30,7 +30,7 @@ class AudioPlayerNode:
 
 if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option("--ip", dest="ip", default="10.0.1.207")
+    parser.add_option("--ip", dest="ip", default="10.0.1.200")
     parser.add_option("--port", dest="port", default=9559)
     (options, args) = parser.parse_args()
 
