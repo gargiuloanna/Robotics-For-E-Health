@@ -4,7 +4,7 @@ import rospy
 import numpy as np
 import os
 from classifier import Classifier
-from std_msgs.msg import String, Bool
+from std_msgs.msg import String, Bool, Int16
 
 from optparse import OptionParser
 from scipy.io.wavfile import write
@@ -26,11 +26,14 @@ class AudioClassificationNode:
         rospy.loginfo("clf ok")
         self.pub.publish(True)
         self.pub = rospy.Publisher("/audio_classification", ClassifiedData, queue_size=3)
+        led_pub = rospy.Publisher("/led/white", Int16, queue_size = 1)
     
         while not rospy.is_shutdown():
 
             rospy.loginfo("audio classification ready")
             data = rospy.wait_for_message('/audio_detection', SpeechData)
+            led_pub.publish(0)
+
             voice = np.array(data.data)
             if data.start_time == data.end_time:
                 sound_label, prob, hyp = None, 1.0, None
