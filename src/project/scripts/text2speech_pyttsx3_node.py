@@ -10,7 +10,7 @@ class Text2SpeechNode_Pyttsx3:
         self.tts = pyttsx3.init()
         self.tts.setProperty('rate', 150)
         voices = self.tts.getProperty('voices')
-        self.tts.setProperty('voice', voices[0].id)
+        self.tts.setProperty('voice', voices[2].id)
         
 
     def say(self, msg):

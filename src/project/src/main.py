@@ -31,6 +31,21 @@ phead = [5, 5, 5.4, 5, 5]
 yhead = [50, 30, 0, -30, -50]
 speed = [0.2, 0.15, 0.15, 0.15, 0.2]
 
+phrases= ['I am Nao','In a minute we will do an exercise together',
+         'We will play with five objects', 'The ones you see in front of me',
+         'Once I pronounce the sound of the indicated object', 'You will repeat it',
+         'Look at the color of my eyes', 'When they are yellow I am listening you',
+         'If they turn green the task is over','If they turn red the task will be repeated',
+         'Please wait a few moments', 'I am getting ready to do the exercise']
+
+def introduction():
+    global patient, tts
+    tts('Hello ' + patient)
+    for phrase in phrases:
+        rospy.sleep(2)
+        tts(phrase)
+    
+
 def point_to_pos(m, p):
     m.arm_elbow(yelbow[p], relbow[p],speed[p], left_arm[p])
     m.arm_shoulder(pshoulder[p], rshoulder[p], speed[p], left_arm[p])
@@ -120,15 +135,14 @@ if __name__ == "__main__":
 
     m = Motion()
     rospy.init_node('main_node', anonymous=True)
-    tts("Hello" + patient)
-    rospy.sleep(1) 
-    tts("we're going to do an exercise")
+    introduction()
     pub = rospy.Publisher("/listen_start", String, queue_size=3)
     color_pub = rospy.Publisher("/led/color", Int32, queue_size=1)
     rospy.Subscriber("/system_ready", Bool)
     rospy.Subscriber("/audio_classification", ClassifiedData)
     errors = 0
     rospy.wait_for_message("/system_ready", Bool)
+    tts('Okay I am Ready Lets go')
     color_pub.publish(0x00ffffff)
     while not rospy.is_shutdown():
         for obj in objs:
