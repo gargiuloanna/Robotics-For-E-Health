@@ -21,6 +21,12 @@ sounds = {"cow": ("This is a cow \\pau=100\\ Repeat", '/home/nao/recordings/audi
          "sheep": ("This is a sheep \\pau=100\\ Repeat",'/home/nao/recordings/audio_recordings/sheep.wav'),
          "dog": ("This is a dog \\pau=100\\ Repeat",'/home/nao/recordings/audio_recordings/dog.wav')}
 
+phrases= ['I am Nao','In a minute we will do an exercise together',
+         'We will play with five objects', 'The ones you see in front of me',
+         'Once I pronounce the sound of the indicated object', 'You will repeat it',
+         'Look at the color of my eyes', 'When they are yellow I am listening you',
+         'If they turn green the task is over','If they turn red the task will be repeated',
+         'Please wait wait a few moments', 'I am getting ready to do the exercise']
 
 yelbow = [-68.6, -88.7, -94.7, 88.7, 68.6]
 relbow = [-0.7, -23.5, -17.8, 23.5, 0.7]
@@ -30,6 +36,11 @@ left_arm = [True, True, True, False, False]
 phead = [5, 5, 5.4, 5, 5]
 yhead = [50, 30, 0, -30, -50]
 speed = [0.2, 0.15, 0.15, 0.15, 0.2]
+
+def introduction():
+    for phrase in phrases:
+        rospy.sleep(1)
+        tts(phrase)
 
 def point_to_pos(m, p):
     m.arm_elbow(yelbow[p], relbow[p],speed[p], left_arm[p])
@@ -120,16 +131,20 @@ if __name__ == "__main__":
 
     m = Motion()
     rospy.init_node('main_node', anonymous=True)
+    
     tts("Hello" + patient)
-    rospy.sleep(1) 
-    tts("we're going to do an exercise")
+    #rospy.sleep(1) 
+    #tts("we're going to do an exercise")
     pub = rospy.Publisher("/listen_start", String, queue_size=3)
     color_pub = rospy.Publisher("/led/color", Int32, queue_size=1)
     rospy.Subscriber("/system_ready", Bool)
     rospy.Subscriber("/audio_classification", ClassifiedData)
     errors = 0
+    introduction()
     rospy.wait_for_message("/system_ready", Bool)
     color_pub.publish(0x00ffffff)
+    tts('Okay I am Ready Lets go')
+    rospy.sleep(1)
     while not rospy.is_shutdown():
         for obj in objs:
             while(work_with(obj, m, objs.index(obj))!=obj):
