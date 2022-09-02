@@ -39,8 +39,9 @@ speed = [0.2, 0.15, 0.15, 0.15, 0.2]
 
 def introduction():
     for phrase in phrases:
-        rospy.sleep(1)
+        rospy.sleep(2)
         tts(phrase)
+
 
 def point_to_pos(m, p):
     m.arm_elbow(yelbow[p], relbow[p],speed[p], left_arm[p])
@@ -135,6 +136,7 @@ if __name__ == "__main__":
     tts("Hello" + patient)
     #rospy.sleep(1) 
     #tts("we're going to do an exercise")
+    introduction()
     pub = rospy.Publisher("/listen_start", String, queue_size=3)
     color_pub = rospy.Publisher("/led/color", Int32, queue_size=1)
     rospy.Subscriber("/system_ready", Bool)

@@ -34,10 +34,10 @@ class LedsNode:
     
     def reset(self, name):
         try:
-            self.led_proxy.off(name)
+            self.led_proxy.reset(name)
         except:
             self.led_proxy = ALProxy("ALLeds", self.ip, self.port)
-            self.led_proxy.off(name)
+            self.led_proxy.reset(name)
 
     def set_color(self, msg):
         self.reset("EarLeds")
