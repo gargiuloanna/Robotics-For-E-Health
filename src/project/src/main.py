@@ -36,12 +36,12 @@ def point_to_pos(m, p):
     m.arm_shoulder(pshoulder[p], rshoulder[p], speed[p], left_arm[p])
     m.head(phead[p], yhead[p], speed[p])
 
-def pc_tts(value):
+def pc_saycall(value):
     tts(value)
 
-def text_2_speech(text):
-    service = rospy.ServiceProxy('tts', Text2Speech)
-    _ = service(text)
+def nao_saycall(value):
+    tts(value[0])
+    audio_player(value[1])
 
 def audio_player(file):
     service = rospy.ServiceProxy('audio_play', AudioPlayer)
@@ -81,12 +81,11 @@ def exit_routine():
 
 def work_with(obj, m, pos):
     rospy.loginfo("We are working with "+obj)
-    point_to_pos(m, pos)  
+    point_to_pos(m, pos)
+    saycall(sents[obj])  
     rospy.sleep(1)
     global color_pub
     color_pub.publish(0xffffff)
-    tts(sounds[obj])
-    audio_
     global pub
     pub.publish("done")
     try:
@@ -105,19 +104,25 @@ if __name__ == "__main__":
     objs , test, max_errors, patient= parse_args()
     check(objs)
     if test == '1':
-        #tts=pc_tts
-        tts = rospy.ServiceProxy('tts_pyttsx3', Text2Speech_pyttsx3)
         rospy.wait_for_service('tts_pyttsx3')
+        tts = rospy.ServiceProxy('tts_pyttsx3', Text2Speech_pyttsx3)
+        sents = calls
+        saycall = pc_saycall
         stand = no_op
     else:
-        tts = rospy.ServiceProxy('tts', Text2Speech)
         rospy.wait_for_service('tts')
+        tts = rospy.ServiceProxy('tts', Text2Speech)
+        rospy.wait_for_service('audio_play')
+        sents = sounds
+        saycall = nao_saycall
         stand = wakeup
         rospy.wait_for_service('wakeup')
 
     m = Motion()
     rospy.init_node('main_node', anonymous=True)
-    tts("Hello\\pau=500\\" + patient + "\\pau=1000\\ we're going to do an exercise")
+    tts("Hello" + patient)
+    rospy.sleep(1) 
+    tts("we're going to do an exercise")
     pub = rospy.Publisher("/listen_start", String, queue_size=3)
     color_pub = rospy.Publisher("/led/color", Int32, queue_size=1)
     rospy.Subscriber("/system_ready", Bool)
