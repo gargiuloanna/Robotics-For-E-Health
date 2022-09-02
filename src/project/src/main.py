@@ -3,19 +3,23 @@
 from optparse import OptionParser
 import rospy
 import sys
-import os
 from sound_recognition.msg import ClassifiedData
 from nao_nodes.srv import Text2Speech, WakeUp, AudioPlayer
 from project.srv import Text2Speech_pyttsx3
 from std_msgs.msg import Bool, String, Int32
 from nao_motion import Motion
 
+calls = {"cow": "This is a cow Repeat mooo",
+         "train": "This is a train Repeat chuff chuff",
+         "car": "This is a car Repeat vroom vroom",
+         "sheep": "This is a sheep Repeat baa",
+         "dog": "This is a dog Repeat bow bow"}
 
-sounds = {"cow": os.path.join('/home/nao/recordings/audio_recordings','cow.wav'),
-         "train": os.path.join('/home/nao/recordings/audio_recordings','train.wav'),
-         "car": os.path.join('/home/nao/recordings/audio_recordings','car.wav'),
-         "sheep": os.path.join('/home/nao/recordings/audio_recordings','sheep.wav'),
-         "dog": os.path.join('/home/nao/recordings/audio_recordings','dog.wav')}
+sounds = {"cow": ("This is a cow \\pau=100\\ Repeat", '/home/nao/recordings/audio_recordings/cow.wav'),
+         "train": ("This is a train \\pau=100\\ Repeat",'/home/nao/recordings/audio_recordings/train.wav'),
+         "car":("This is a car \\pau=100\\ Repeat",'/home/nao/recordings/audio_recordings/car.wav'),
+         "sheep": ("This is a sheep \\pau=100\\ Repeat",'/home/nao/recordings/audio_recordings/sheep.wav'),
+         "dog": ("This is a dog \\pau=100\\ Repeat",'/home/nao/recordings/audio_recordings/dog.wav')}
 
 
 yelbow = [-68.6, -88.7, -94.7, 88.7, 68.6]
@@ -32,9 +36,8 @@ def point_to_pos(m, p):
     m.arm_shoulder(pshoulder[p], rshoulder[p], speed[p], left_arm[p])
     m.head(phead[p], yhead[p], speed[p])
 
-def pc_tts(text):
-    service = rospy.ServiceProxy('tts_pyttsx3', Text2Speech_pyttsx3)
-    _ = service(text)
+def pc_tts(value):
+    tts(value)
 
 def text_2_speech(text):
     service = rospy.ServiceProxy('tts', Text2Speech)
@@ -43,9 +46,6 @@ def text_2_speech(text):
 def audio_player(file):
     service = rospy.ServiceProxy('audio_play', AudioPlayer)
     _ = service(file)
-
-def say_call(obj):
-    tts(sounds[obj])
 
 def check(objects):
     for obj in objects:
@@ -85,7 +85,8 @@ def work_with(obj, m, pos):
     rospy.sleep(1)
     global color_pub
     color_pub.publish(0xffffff)
-    say_call(obj)
+    tts(sounds[obj])
+    audio_
     global pub
     pub.publish("done")
     try:
@@ -104,11 +105,12 @@ if __name__ == "__main__":
     objs , test, max_errors, patient= parse_args()
     check(objs)
     if test == '1':
-        tts = pc_tts
+        #tts=pc_tts
+        tts = rospy.ServiceProxy('tts_pyttsx3', Text2Speech_pyttsx3)
         rospy.wait_for_service('tts_pyttsx3')
         stand = no_op
     else:
-        tts = text_2_speech
+        tts = rospy.ServiceProxy('tts', Text2Speech)
         rospy.wait_for_service('tts')
         stand = wakeup
         rospy.wait_for_service('wakeup')

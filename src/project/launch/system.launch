@@ -10,9 +10,11 @@
   <arg name="test" default = "0"/> <!-- 0 means testing false any other value will refer to true -->
   <arg name="patient" default = "Salvatore"/>
   <arg name="nao_ip" default = "10.0.1.200"/>
+  <arg name="nao_port" default = "9559"/>
 
   <include file="src/nao_nodes/launch/nao_bringup.launch" unless="$(arg test)" >
     <arg name="nao_ip" value="$(arg nao_ip)"/>
+    <arg name="nao_port" value="$(arg nao_port)"/>
   </include>
   <include file="src/sound_recognition/launch/classify.launch" >
     <arg name="test" value="$(arg test)"/>
