@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from std_msgs.msg import Float32MultiArray, Int16MultiArray
-from sensor_msgs.msg import Image
+
+from std_msgs.msg import Float32MultiArray
 from math import pi
 import rospy
 
@@ -41,7 +41,6 @@ class Motion():
             self.rshoulderroll.publish(msg1)
             self.rshoulderpitch.publish(msg2)
 
-
     def arm_elbow(self, yaw, roll, speed=1, left=False):
         msg1 = Float32MultiArray()
         msg2 = Float32MultiArray()
@@ -57,7 +56,6 @@ class Motion():
         else:
             self.relbowroll.publish(msg1)
             self.relbowyaw.publish(msg2)
-
 
     def head(self, pitch, yaw, speed=1):
         msg1 = Float32MultiArray()

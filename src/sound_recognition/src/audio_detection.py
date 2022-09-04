@@ -8,6 +8,7 @@ from ros_vad import SpeechRecognitionVAD
 from speech_recognition import Microphone
 from voice_activity_detection import ROSMicrophoneSource
 
+YELLOW = 0x00ffff00
 
 class AudioDetectionNode:
 
@@ -21,7 +22,6 @@ class AudioDetectionNode:
         self.pub = rospy.Publisher('audio_detection', SpeechData, queue_size=1)
         rospy.init_node('audio_detection_node')
         self.led_pub = rospy.Publisher('/led/color', Int32, queue_size=1)
-        #rospy.sleep(2)
         rospy.Subscriber('/listen_start', String, self.listen)
         if self.test:
             source = Microphone(None, 16000, 2720)
@@ -35,19 +35,15 @@ class AudioDetectionNode:
             timeout=0,
             phrase_time_limit=5,  # if put to None, the sounds heard can be of infinite lenght
             calibration_duration=1,
-            # the method works by using an energy threshold, so to calibrate the threshould the noise energy in
-            # the environment has to be known, the calibration factor che used
             format='int16',
             source=source
         )  
 
     def listen(self, data):
         rospy.loginfo("Listening...")
-        self.led_pub.publish(0xffff00)
+        self.led_pub.publish(YELLOW)
         # Get speech data
-        # rospy.loginfo("Calibrating...")
         self.speechRecognition.calibrate()  # dynamic calibration manages variations in the sound
-        # rospy.loginfo("Recording...")
         speech, timestamps = self.speechRecognition.get_speech_frame(timeout=self.timeout)
 
         msg = SpeechData()
@@ -63,7 +59,7 @@ class AudioDetectionNode:
             msg.end_time = timestamps[1]
 
         # Message publishing
-        rospy.loginfo("I'm publishing a record of "+ str(msg.end_time - msg.start_time)+" seconds") # TODO remove
+        rospy.loginfo("I'm publishing a record of "+ str(msg.end_time - msg.start_time)+" seconds")
         self.pub.publish(msg)
 
 
@@ -72,7 +68,7 @@ if __name__ == '__main__':
     parser.add_option("--test", dest="test", default='0')
     parser.add_option("--timeout", dest="timeout", default=5)
     (options, args) = parser.parse_args()
-    test = True if options.test == '1' else False
+    test = False if options.test == '0' else True
     speech_detection = AudioDetectionNode(test, int(options.timeout))
     speech_detection.start()
     rospy.spin()

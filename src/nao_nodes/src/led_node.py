@@ -1,4 +1,5 @@
 #!/usr/bin/python
+
 from naoqi import ALProxy
 from optparse import OptionParser
 from std_msgs.msg import Int32
@@ -17,13 +18,6 @@ class LedsNode:
         except:
             self.led_proxy = ALProxy("ALLeds", self.ip, self.port)
             self.led_proxy.fadeRGB("FaceLeds", color, 0)
-
-    def rotateEyes(self, color):
-        try:
-            self.led_proxy.rotateEyes(color, 2, 100)
-        except:
-            self.led_proxy = ALProxy("ALLeds", self.ip, self.port)
-            self.led_proxy.rotateEyes(color, 2, 100)
 
     def ear(self, color):
         try:
@@ -48,10 +42,7 @@ class LedsNode:
     def start(self):
         rospy.init_node("led_node", anonymous=True)
         rospy.Subscriber("/led/color", Int32, self.set_color)
-        rospy.Subscriber("/led/rotate", Int32, self.rotateEyes)
-        self.rotateEyes(0x008080)
         rospy.spin()
-
 
 if __name__ == "__main__":
     parser = OptionParser()

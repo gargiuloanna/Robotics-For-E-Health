@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
+
 from sound_recognition.msg import SpeechData, ClassifiedData
 import rospy
 import numpy as np
 import os
 from classifier import Classifier
-from std_msgs.msg import String, Bool, Int32
+from std_msgs.msg import Bool, Int32
 
 from optparse import OptionParser
 from scipy.io.wavfile import write
 from os import listdir
 from os.path import isfile, join
-dir_path = os.path.dirname(os.path.realpath(__file__))
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+WHITE = 0x00ffffff
 
 class AudioClassificationNode:
     __slots__ = "clf", "pub"
@@ -31,7 +33,7 @@ class AudioClassificationNode:
         while not rospy.is_shutdown():
 
             data = rospy.wait_for_message('/audio_detection', SpeechData)
-            led_pub.publish(0x00ffffff)
+            led_pub.publish(WHITE)
 
             voice = np.array(data.data)
             if data.start_time == data.end_time:
@@ -54,6 +56,8 @@ class AudioClassificationNode:
             msg.class_label = "None" if sound_label is None else sound_label
             msg.probability = prob
             msg.hypothesis = "None" if hyp is None else hyp
+
+            # Message publishing
             self.pub.publish(msg)
 
 

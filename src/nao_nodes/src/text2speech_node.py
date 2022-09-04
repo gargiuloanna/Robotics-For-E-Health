@@ -11,14 +11,13 @@ class Text2SpeechNode:
         self.port = port
         self.tts = ALProxy("ALTextToSpeech", ip, port)
         self.tts.setParameter("speed", 100)
-        self.tts.setVolume(1.0)
 
     def say(self, msg):
         try:
-            self.tts.say(msg.speech, "English")
+            self.tts.say('\\rspd=80\\' + '\\vol=100\\' + msg.speech, "English") #rspd is the word/minute rate while vol is the volume
         except:
             self.tts = ALProxy("ALTextToSpeech", self.ip, self.port)
-            self.tts.say(msg.speech, "English")
+            self.tts.say('\\rspd=80\\' + '\\vol=100\\' + msg.speech, "English") #rspd is the word/minute rate while vol is the volume
         return "ACK"
     
     def start(self):

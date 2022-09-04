@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
+
 import rospy
 import pyttsx3
 from project.srv import Text2Speech_pyttsx3
-
 
 class Text2SpeechNode_Pyttsx3:
 
@@ -10,9 +10,8 @@ class Text2SpeechNode_Pyttsx3:
         self.tts = pyttsx3.init()
         self.tts.setProperty('rate', 150)
         voices = self.tts.getProperty('voices')
-        self.tts.setProperty('voice', voices[2].id)
+        self.tts.setProperty('voice', voices[2].id) #voices[2] corresponds to English
         
-
     def say(self, msg):
         self.tts.say(msg.speech)
         self.tts.runAndWait()
